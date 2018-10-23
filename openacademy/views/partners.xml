@@ -1,7 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <data>
+        
+          <!-- surcharge du formulaire - Commun Clients/Fournisseurs -->
+		<record id="view_partner_form" model="ir.ui.view">
+			<field name="name">res.partner.form</field>
+			<field name="model">res.partner</field>
+			<field name="inherit_id" ref="base.view_partner_form" />
+			<field name="priority">99</field>
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='vat']" position="after">
+                    <field name="instructor"/>
+				</xpath>
+                <xpath expr="//notebook[1]" position="inside">
+                    <page string="Sessions" attrs="{'invisible':[('instructor', '=', True)]}">
+                        <field name="session_ids"/>
+                    </page>
+				</xpath>
+			</field>
+		</record>      
 
+        <!-- surcharge de la recherche - Commun Clients/Fournisseurs -->
+		<record id="view_res_partner_filter" model="ir.ui.view">
+			<field name="name">res.partner.select</field>
+			<field name="model">res.partner</field>
+			<field name="inherit_id" ref="base.view_res_partner_filter" />
+			<field eval="99" name="priority" />
+			<field name="arch" type="xml">
+				<xpath expr="//search[1]" position="inside">
+                    <filter string="Instructor" name="type_instructor" domain="[('instructor','=',1)]"/>
+				</xpath>
+			</field>
+		</record>   
+        
         <record model="ir.actions.act_window" id="contact_list_action">
             <field name="name">Contacts</field>
             <field name="res_model">res.partner</field>
