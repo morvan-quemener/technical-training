@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>  		
+	<!-- Top Menu -->
+	<menuitem id="menu_session" name="Sessions" sequence="309"/>
+	<!-- **Menu Session -->
+	<menuitem id="menu_session_matiere" sequence="10" parent="menu_session" action="action_course"/>
+</odoo>
