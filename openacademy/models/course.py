@@ -59,3 +59,10 @@ class Session(models.Model):
             }}
         delta = fields.Date.from_string(self.end_date) - fields.Date.from_string(self.start_date)
         self.duration = delta.days + 1
+        
+        
+class ResPartner(models.Model):
+    _inherit = "res.partner"
+    
+    instructor = fields.Boolean(String="Instructor", default=False)
+    session_ids = fields.Many2many("openacademy.session", string="Sessions", ondelete="cascade", readonly=False)

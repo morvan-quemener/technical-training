@@ -9,6 +9,12 @@
         <field name="view_mode">tree,form</field>
     </record>
 
+    <record id="library_bookcopy_action" model="ir.actions.act_window">
+        <field name="name">BookCopy</field>
+        <field name="res_model">library.bookcopy</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
     <record id="library_partner_action" model="ir.actions.act_window">
         <field name="name">Partners</field>
         <field name="res_model">library.partner</field>
@@ -44,6 +50,12 @@
         parent="library_menu"
         action="library_book_action"
         name="Books" />
+
+   <menuitem
+        id="library_bookcopy_menu"
+        parent="library_menu"
+        action="library_bookcopy_action"
+        name="Books copies" />
 
     <!-- Library/Library/Partners -->
     <menuitem
