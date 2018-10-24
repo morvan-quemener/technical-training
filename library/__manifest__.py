@@ -24,12 +24,12 @@
     # always loaded
     'data': [
         "data/library_data.xml",
-        "views/menus.xml",
         "views/customer.xml",
         "views/book.xml",
         "views/author.xml",
         "views/rental.xml",
-        "views/res_config_settings.xml"
+        "views/res_config_settings.xml",
+        "views/menus.xml"
     ],
     # only loaded in demonstration mode
     'demo': [],
