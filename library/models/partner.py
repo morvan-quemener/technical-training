@@ -19,4 +19,30 @@ class Partner(models.Model):
         'res.country',
         'Nationality',
     )
+    payment_ids = fields.One2many(
+        'library.payment',
+        'customer_id',
+        string='Payment')
     birthdate =  fields.Date('Birthdate',)
+    
+    payment_count = fields.Integer(string="Payment Number", compute="_compute_payment_count")
+    
+    @api.multi
+    def _compute_payment_count(self):
+        for partner in self:
+            partner.payment_count = len(partner.payment_ids)
+            
+    @api.multi
+    def action_open_payment(self):
+        self.ensure_one()
+        if self.payment_ids:
+            return({
+                'type' : 'ir.actions.act_window',
+                'name' : _('Rental Payment'),
+                'view_mode': 'tree,form',
+                'res_model': 'library.payment',
+                'res_id' : self.payment_ids
+            })
+            
+        
+            

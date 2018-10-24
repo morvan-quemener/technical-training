@@ -25,6 +25,7 @@
     'data': [
         # 'security/ir.model.access.csv',
         'data/data.xml',
+        'data/cron.xml',
         'views/courses.xml',
         'views/sessions.xml',
         'views/partners.xml',

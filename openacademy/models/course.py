@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from datetime import timedelta
+from datetime import timedelta,date
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
 
@@ -62,6 +62,8 @@ class Session(models.Model):
 
     percentage_per_day = fields.Integer("%", default=100)
     attendees_count = fields.Integer(string="Attendees count", compute='_get_attendees_count', store=True)
+    state = fields.Selection([('draft', 'Draft'), ('confirmed', 'Confirmed'), ('done', 'Done')
+        ], string='Status', readonly=True, copy=False, default='draft')
 
     def _warning(self, title, message):
         return {'warning': {
@@ -88,6 +90,26 @@ class Session(models.Model):
             return self._warning("Incorrect 'seats' value",  "The number of available seats may not be negative")
         if self.seats < len(self.attendee_ids):
             return self._warning("Too many attendees", "Increase seats or remove excess attendees")
+    
+    @api.model
+    def create(self, vals):
+        session = super(Session, self).create(vals)
+        if session.state=='draft' and len(session.attendee_ids)>=self.seats/2:
+            session.state='confirmed'
+        return session
+    
+    @api.multi
+    def write(self, vals):
+        res = super(Session, self).write(vals)
+        for session in self:
+            if session.state=='draft' and len(session.attendee_ids)>=self.seats/2:
+                session.state='confirmed'
+        return res
+    
+    @api.multi
+    def _cron_update_state(self):
+         for session in self.search([('state','=','confirmed')]).filtered(lambda s : s.end_date<date.today()):
+            session.state='done'   
 
     @api.constrains('instructor_id', 'attendee_ids')
     def _check_instructor_not_in_attendees(self):
@@ -103,7 +125,7 @@ class Session(models.Model):
             else:
                 # Add duration to start_date, but: Monday + 5 days = Saturday,
                 # so subtract one second to get on Friday instead
-                start = fields.Datetime.from_string(session.start_date)
+                start = session.start_date
                 duration = timedelta(days=session.duration, seconds=-1)
                 session.end_date = start + duration
 
@@ -112,6 +134,6 @@ class Session(models.Model):
             if session.start_date and session.end_date:
                 # Compute the difference between dates, but: Friday - Monday = 4
                 # days, so add one day to get 5 days instead
-                start_date = fields.Datetime.from_string(session.start_date)
-                end_date = fields.Datetime.from_string(session.end_date)
+                start_date = session.start_date
+                end_date = session.end_date
                 session.duration = (end_date - start_date).days + 1

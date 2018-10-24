@@ -3,3 +3,4 @@
 from . import partner
 from . import books
 from . import rentals
+from . import res_config_settings
